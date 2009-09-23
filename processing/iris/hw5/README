@@ -1,0 +1,6 @@
+This directory contains the homework 5 code.
+
+The file data/data2tsv.py is a Python script that convert the iris.data file into a tsv file, to be readed by the FloatTabple class.
+
+hw5.pdf plot the mean and standard deviation for the iris data for all the attributes, and also shows a scatter plot between the petal length and the petal width.
+
