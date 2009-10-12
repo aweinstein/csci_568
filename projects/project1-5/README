@@ -1,0 +1,218 @@
+CSCI 568 Project 1.5
+2009-10-11
+Alejandro Weinstein 
+
+
+* General Strategy
+
+My strategy is based on using the fields that seems to be stronger predictors
+of the disposition code. For instance, it seems logical to think that the
+diagnostic code is more correlated with the disposition code than the Hospital
+Id. Then I will run K-mean using only a few combinations of these fields.
+
+In particular, I am looking at the following attributes:
+
+Interval, age, patient disposition, length of stay, principal DX code,
+principal PR code, PL1.
+
+Notice that the attribute PL1 (product line) looks particularly interesting,
+since it indicate the general reason of the visit for the patient. This is the
+field description:
+
+Product Line ID	Product Line Name
+0	NONSPECIFIC DIAGNOSES
+1	ONCOLOGY
+2	POTENTIAL AMBULATORY
+3	INJURIES/TRAUMA
+4	GYNECOLOGY
+5	CARDIAC
+6	MATERNAL/INFANT CARE
+7	HEAD/NECK/PLASTICS
+8	GASTROINTESTINAL
+9	HEMATOLOGY
+10	NEUROLOGY
+11	EAR/NOSE/THROAT
+12	OPHTHALMOLOGY
+13	BONE & JOINT
+14	ENDOCRINOLOGY
+15	OTHER
+16	PSYCHIATRIC
+17	PULMONARY
+18	UROLOGY/RENAL
+19	VASCULAR
+20	TRANSPLANT
+21	DRUG & ALCOHOL
+ 
+ 
+I am using train-a.csv.zip (with 99,000 records). K-means run reasonable fast
+with this amount of records.
+
+* Detailed procedure
+
+- Load train-a.csv 
+- Many of the nominal records are recongized as numeric by
+Weka. I use the NumericToNominal filter to do the conversion:
+
+NumericToNominal -R 7-9,11-13,15-16,31-45,53,48-49,56-71,77-78
+
+which convert the following attributes to Nominal:
+
+Patient-Race, Patient-Ethnicity, Patient-Disposition, Admit-Type,
+Admit-Source, Hospital-ID, Principal-Dx-Code, Admit-Dx-Code,
+Principal-PR-Code, Other-PR-Code-1, Other-PR-Code-2, Other-PR-Code-3,
+Other-PR-Code-4, Other-PR-Code-5, Other-PR-Code-6, Other-PR-Code-7,
+Other-PR-Code-8, Other-PR-Code-9, Other-PR-Code-10, Other-PR-Code-11,
+Other-PR-Code-12, Other-PR-Code-13, Other-PR-Code-14, Reimb DRG, Reimb MDC,
+Serv-Class, CMC1, CMC2, CMC3, CMC4, CMC5, CMC6, CMC7, CMC8, CMC9, CMC10, PL1,
+PL2, PL3, PL4, PL5, Pot Amb, Severity
+
+
+- After several trials, I found the following interesting clusters:
+
+Clustering on the attributes Age,Patient-Disposition and PL1. I used the
+Euclidean distance, since it allow to get interesting information regarding the
+age attribute, and choose 20 clusters. 
+
+The most interesting cluster that appears is Cluster 4, which correspond to the
+prototype of age 12.4, disposition 1 (go home) and product line 6
+(maternal/Infant care). This cluster is interesting, because is the only
+cluster for young people, and both the disposition and product line makes
+sense. From this cluster we can conclude that most young people (let say below
+20 years), go to the hospital for Infant care, and then return home.
+
+The file cluster_1.png has a screenshot with the visualization.
+
+The Weka data summary follows.
+
+=== Run information ===
+
+Scheme:       weka.clusterers.SimpleKMeans -N 20 -A "weka.core.EuclideanDistance -R first-last" -I 500 -S 10
+Relation:     train-a-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13,15-16,31-45,53,48-49,56-71,77-78-weka.filters.unsupervised.attribute.Remove-R1-3,11-14,16-30,32-65,67-79
+Instances:    99999
+Attributes:   10
+              Age
+              Patient-Disposition
+              PL1
+Ignored:
+              Interval
+              Patient-Sex
+              Patient-Race
+              Patient-Ethnicity
+              Length of Stay
+              Principal-Dx-Code
+              Principal-PR-Code
+Test mode:    evaluate on training data
+
+=== Model and evaluation on training set ===
+
+
+kMeans
+======
+
+Number of iterations: 21
+Within cluster sum of squared errors: 43968.09174265538
+Missing values globally replaced with mean/mode
+
+Cluster centroids:
+                                   Cluster#
+Attribute              Full Data          0          1          2          3          4          5          6          7          8          9         10         11         12         13         14         15         16         17         18         19
+                         (99999)     (6639)     (4181)     (6187)     (1203)      (469)     (4390)     (8471)     (5032)     (7812)     (6416)     (2499)     (6038)     (6961)     (2187)     (2501)     (2661)     (8016)     (5361)     (4593)     (8382)
+============================================================================================================================================================================================================================================================
+Age                      72.7984    89.8117    65.7962    79.1036    72.1089    12.4009    55.7232    81.6981    64.1508    85.1636    76.5535    57.6006    75.0081    64.4557    70.1349    77.7409    64.7294    68.0141    71.1498    46.5659    84.0347
+Patient-Disposition            1          3          6          1          5          1          1          3          6          6          6          3          3          1          1         62          1          1          1          1          1
+PL1                            5          5          5         17         17          6         17         17         20          5         17          5          5         20          1         20         14          5          8          5          5
+
+
+Clustered Instances
+
+ 0       6639 (  7%)
+ 1       4181 (  4%)
+ 2       6187 (  6%)
+ 3       1203 (  1%)
+ 4        469 (  0%)
+ 5       4390 (  4%)
+ 6       8471 (  8%)
+ 7       5032 (  5%)
+ 8       7812 (  8%)
+ 9       6416 (  6%)
+10       2499 (  2%)
+11       6038 (  6%)
+12       6961 (  7%)
+13       2187 (  2%)
+14       2501 (  3%)
+15       2661 (  3%)
+16       8016 (  8%)
+17       5361 (  5%)
+18       4593 (  5%)
+19       8382 (  8%)
+
+
+
+
+Clustering on the attributes Patient-Disposition and Principal-Dx-Code. I used the
+Manhattan distance, since the data type of both attributes is nominal, and the
+Euclidean distance penalize the more records that are far away. I choose 6
+clusters, since a bigger number of clusters produced cluster with a very small
+number of records.
+
+The most interesting cluster that appears is Cluster 5, which correspond to the
+prototype of disposition 120 (expired) and diagnostic code 389 (Hearing
+Loss). This is interesting because we found a cluster for the dead people,
+which is one of the dispositions we want to predict. However, the diagnostic
+code doesn't makes much sense, since it is hard to believe that most people
+diagnosed with hearing loss end dead. One explanation for this is that the
+diagnostic code for the cluster prototype is the centroid of the cluster, and
+if we think that there are many diagnostic code that can end with the patient
+dead, the average of this codes doesn't need to make sense.
+
+The file cluster_2.png has a screenshot with the visualization.
+
+The Weka data summary follows.
+
+=== Run information ===
+
+Scheme:       weka.clusterers.SimpleKMeans -N 6 -A "weka.core.ManhattanDistance -R first-last" -I 500 -S 10
+Relation:     train-a-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13,15-16,31-45,53,48-49,56-71,77-78-weka.filters.unsupervised.attribute.Remove-R1-3,11-14,16-30,32-65,67-79
+Instances:    99999
+Attributes:   10
+              Patient-Disposition
+              Principal-Dx-Code
+Ignored:
+              Interval
+              Patient-Sex
+              Age
+              Patient-Race
+              Patient-Ethnicity
+              Length of Stay
+              Principal-PR-Code
+              PL1
+Test mode:    evaluate on training data
+
+=== Model and evaluation on training set ===
+
+
+kMeans
+======
+
+Number of iterations: 3
+Sum of within cluster distances: 99934.0
+Missing values globally replaced with mean/mode
+
+Cluster centroids:
+                                   Cluster#
+Attribute              Full Data          0          1          2          3          4          5
+                         (99999)    (37068)    (21721)    (37712)     (1485)       (96)     (1917)
+==================================================================================================
+Patient-Disposition            1          3          6          1          5          3         20
+Principal-Dx-Code           4280       4280       4280      41401      51881       2761        389
+
+
+Clustered Instances
+
+0      37068 ( 37%)
+1      21721 ( 22%)
+2      37712 ( 38%)
+3       1485 (  1%)
+4         96 (  0%)
+5       1917 (  2%)
+
