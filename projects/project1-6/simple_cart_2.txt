@@ -1,0 +1,137 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.SimpleCart -S 1 -M 2.0 -N 3 -C 1.0
+Relation:     train-a-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13-weka.filters.unsupervised.attribute.NumericToNominal-R7-9,11-13,15-16,31-45,53,48-49,56-71,77-78-weka.filters.unsupervised.attribute.Remove-R1-4,8,13,15-65,67-79
+Instances:    16406
+Attributes:   9
+              Patient-Sex
+              Age
+              Patient-Race
+              Patient-Disposition
+              Length of Stay
+              Admit-Type
+              Admit-Source
+              Region-ID
+              PL1
+Test mode:    5-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+CART Decision Tree
+
+PL1=(6)|(16)|(5)|(21)
+|  Length of Stay < 4.5
+|  |  Region-ID=(E)|(F)|(G)
+|  |  |  Region-ID=(E)|(F)|(M)|(J)|(C)|(H)|(I)|(L)|(D)|(K): 0(220.0/70.0)
+|  |  |  Region-ID!=(E)|(F)|(M)|(J)|(C)|(H)|(I)|(L)|(D)|(K)
+|  |  |  |  Patient-Sex=(F): 0(87.0/41.0)
+|  |  |  |  Patient-Sex!=(F): 2(41.0/27.0)
+|  |  Region-ID!=(E)|(F)|(G)
+|  |  |  Age < 85.5
+|  |  |  |  Admit-Source=(1)|(5)|(2)|(3)
+|  |  |  |  |  PL1=(21)|(16)|(6): 2(21.0/12.0)
+|  |  |  |  |  PL1!=(21)|(16)|(6): 0(213.0/147.0)
+|  |  |  |  Admit-Source!=(1)|(5)|(2)|(3)
+|  |  |  |  |  Length of Stay < 1.5: 2(531.0/204.0)
+|  |  |  |  |  Length of Stay >= 1.5
+|  |  |  |  |  |  Region-ID=(M)|(I)|(L)|(K)|(D)|(J)|(G)|(F)|(E)
+|  |  |  |  |  |  |  Patient-Race=(99)|(2): 0(114.0/80.0)
+|  |  |  |  |  |  |  Patient-Race!=(99)|(2)
+|  |  |  |  |  |  |  |  Age < 61.5: 2(89.0/55.0)
+|  |  |  |  |  |  |  |  Age >= 61.5
+|  |  |  |  |  |  |  |  |  Length of Stay < 3.5: 2(200.0/180.0)
+|  |  |  |  |  |  |  |  |  Length of Stay >= 3.5
+|  |  |  |  |  |  |  |  |  |  Age < 79.5
+|  |  |  |  |  |  |  |  |  |  |  Patient-Sex=(F): 2(33.0/21.0)
+|  |  |  |  |  |  |  |  |  |  |  Patient-Sex!=(F): 0(32.0/26.0)
+|  |  |  |  |  |  |  |  |  |  Age >= 79.5: 0(35.0/12.0)
+|  |  |  |  |  |  Region-ID!=(M)|(I)|(L)|(K)|(D)|(J)|(G)|(F)|(E): 2(361.0/178.0)
+|  |  |  Age >= 85.5
+|  |  |  |  Length of Stay < 1.5
+|  |  |  |  |  Admit-Type=(3)|(2): 0(16.0/9.0)
+|  |  |  |  |  Admit-Type!=(3)|(2)
+|  |  |  |  |  |  Age < 93.5: 2(42.0/39.0)
+|  |  |  |  |  |  Age >= 93.5: 20(12.0/4.0)
+|  |  |  |  Length of Stay >= 1.5
+|  |  |  |  |  Region-ID=(M)|(I)|(L)|(K)|(D)|(J)|(H)|(G)|(F)|(E): 0(141.0/89.0)
+|  |  |  |  |  Region-ID!=(M)|(I)|(L)|(K)|(D)|(J)|(H)|(G)|(F)|(E): 2(40.0/44.0)
+|  Length of Stay >= 4.5
+|  |  Age < 76.5
+|  |  |  Length of Stay < 21.5
+|  |  |  |  Admit-Source=(9)|(1)|(5)|(2): 0(162.0/61.0)
+|  |  |  |  Admit-Source!=(9)|(1)|(5)|(2)
+|  |  |  |  |  Length of Stay < 6.5
+|  |  |  |  |  |  Age < 63.5: 2(93.0/60.0)
+|  |  |  |  |  |  Age >= 63.5
+|  |  |  |  |  |  |  Region-ID=(E)|(F)|(G)|(I)|(M): 0(51.0/24.0)
+|  |  |  |  |  |  |  Region-ID!=(E)|(F)|(G)|(I)|(M): 2(81.0/81.0)
+|  |  |  |  |  Length of Stay >= 6.5: 0(388.0/305.0)
+|  |  |  Length of Stay >= 21.5
+|  |  |  |  PL1=(16)|(6): 2(21.0/20.0)
+|  |  |  |  PL1!=(16)|(6)
+|  |  |  |  |  Length of Stay < 40.5: 0(45.0/46.0)
+|  |  |  |  |  Length of Stay >= 40.5: 20(24.0/15.0)
+|  |  Age >= 76.5: 0(911.0/596.0)
+PL1!=(6)|(16)|(5)|(21)
+|  Length of Stay < 22.5
+|  |  Admit-Source=(9)|(1)|(5)|(2)|(3)|(7): 0(6297.92/2510.84)
+|  |  Admit-Source!=(9)|(1)|(5)|(2)|(3)|(7)
+|  |  |  Length of Stay < 9.5: 2(120.11/83.07)
+|  |  |  Length of Stay >= 9.5: 0(85.0/71.03)
+|  Length of Stay >= 22.5
+|  |  Admit-Source=(9)|(1)|(5)|(2)|(3)|(7)
+|  |  |  Length of Stay < 48.5
+|  |  |  |  Age < 86.5
+|  |  |  |  |  Admit-Source=(5): 20(14.0/6.0)
+|  |  |  |  |  Admit-Source!=(5)
+|  |  |  |  |  |  Age < 63.5: 0(62.0/58.0)
+|  |  |  |  |  |  Age >= 63.5
+|  |  |  |  |  |  |  Length of Stay < 25.5: 0(55.0/37.0)
+|  |  |  |  |  |  |  Length of Stay >= 25.5
+|  |  |  |  |  |  |  |  Region-ID=(E)|(F): 0(21.0/13.0)
+|  |  |  |  |  |  |  |  Region-ID!=(E)|(F)
+|  |  |  |  |  |  |  |  |  PL1=(1)|(15)|(3)|(10)|(20)|(9)|(18): 20(59.0/46.0)
+|  |  |  |  |  |  |  |  |  PL1!=(1)|(15)|(3)|(10)|(20)|(9)|(18)
+|  |  |  |  |  |  |  |  |  |  PL1=(7)|(13)|(19)|(14): 0(26.0/15.0)
+|  |  |  |  |  |  |  |  |  |  PL1!=(7)|(13)|(19)|(14): 20(40.0/35.0)
+|  |  |  |  Age >= 86.5: 20(53.9/33.0)
+|  |  |  Length of Stay >= 48.5
+|  |  |  |  Length of Stay < 82.5: 20(88.0/38.0)
+|  |  |  |  Length of Stay >= 82.5: 0(11.0/4.0)
+|  |  Admit-Source!=(9)|(1)|(5)|(2)|(3)|(7)
+|  |  |  Admit-Type=(3)|(4)|(9): 2(24.0/20.0)
+|  |  |  Admit-Type!=(3)|(4)|(9): 0(17.0/12.09)
+
+Number of Leaf Nodes: 42
+
+Size of the Tree: 83
+
+Time taken to build model: 34.44 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       10697               65.2018 %
+Incorrectly Classified Instances      5709               34.7982 %
+Kappa statistic                          0.2397
+Mean absolute error                      0.3223
+Root mean squared error                  0.4043
+Relative absolute error                 88.7231 %
+Root relative squared error             94.8641 %
+Total Number of Instances            16406     
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.898     0.7        0.667     0.898     0.766      0.655    0
+                 0.345     0.079      0.6       0.345     0.438      0.715    2
+                 0.121     0.018      0.505     0.121     0.195      0.669    20
+Weighted Avg.    0.652     0.449      0.628     0.652     0.605      0.672
+
+=== Confusion Matrix ===
+
+    a    b    c   <-- classified as
+ 8983  804  213 |    a = 0
+ 2707 1448   48 |    b = 2
+ 1777  160  266 |    c = 20
+
