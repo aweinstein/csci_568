@@ -1,0 +1,277 @@
+CSCI 568 Project 2.1
+2009-10-23
+Alejandro Weinstein 
+
+1. Summary stats   
+
+For the numeric variables:
+
+Temperature
+	Min: 64
+        Max: 85
+	Mean: 73.57
+	StdDev: 6.572
+
+Humidity
+	Min: 65
+        Max: 96
+	Mean: 81.6
+	StdDev: 10.28
+
+For the nominal variables (frequency table):
+
+Outlook
+	sunny: 5
+	overcast: 4
+	rainy: 5
+
+Windy:
+	True: 6
+	False: 8
+
+Play:
+	Yes: 9
+	No: 5
+
+
+2. Clusters
+
+I run k-mean trying differents attributes and different numbers of
+clusters. I found the most interesting clusters with 2 clusters and ingnorig
+the outlook. These are the clusters:
+
+Cluster centroids:
+                           Cluster#
+Attribute      Full Data          0          1
+                    (14)        (8)        (6)
+==============================================
+temperature      73.5714     73.125    74.1667
+humidity         81.6429      77.75    86.8333
+windy              FALSE      FALSE       TRUE
+play                 yes        yes         no
+
+The "play" and "not play" clustears appears. It seems that windy and humid is
+not good for playing. The file clusters.txt contains the complete output.
+
+3. Decision tree
+
+I run the J48 decision tree in both the original and the "nominalized"
+dataset. The decision tree produced a much better result in the original data
+set (64% of correct classification over 50% of correct classification). The
+file j48.png has a visualization of the decision tree. At least it agree with
+k-means about the humid and windy days.
+
+4. Rule based classifiers.
+
+* ConjunctiveRule
+
+Description:
+
+This class implements a single conjunctive rule learner that can predict for
+numeric and nominal class labels.
+
+A rule consists of antecedents "AND"ed together and the consequent (class
+value) for the classification/regression. In this case, the consequent is the
+distribution of the available classes (or mean for a numeric value) in the
+dataset. If the test instance is not covered by this rule, then it's predicted
+using the default class distributions/value of the data not covered by the rule
+in the training data.This learner selects an antecedent by computing the
+Information Gain of each antecendent and prunes the generated rule using
+Reduced Error Prunning (REP) or simple pre-pruning based on the number of
+antecedents.
+
+For classification, the Information of one antecedent is the weighted average
+of the entropies of both the data covered and not covered by the rule.  For
+regression, the Information is the weighted average of the mean-squared errors
+of both the data covered and not covered by the rule.
+
+Rule set:
+ => play = yes
+
+Performance:
+
+Correctly Classified Instances           9               64.2857 %
+Incorrectly Classified Instances         5               35.7143 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 1         1          0.643     1         0.783      0.333    yes
+                 0         0          0         0         0          0.333    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 9 0 | a = yes
+ 5 0 | b = no
+
+* PART
+
+Description:
+
+Class for generating a PART decision list. Uses separate-and-conquer. Builds a
+partial C4.5 decision tree in each iteration and makes the "best" leaf into a
+rule.
+
+Rule set:
+
+outlook = overcast: yes (4.0)
+
+windy = TRUE: no (4.0/1.0)
+
+outlook = sunny: no (3.0/1.0)
+
+: yes (3.0)
+
+Performance
+
+Correctly Classified Instances           9               64.2857 %
+Incorrectly Classified Instances         5               35.7143 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.778     0.6        0.7       0.778     0.737      0.644    yes
+                 0.4       0.222      0.5       0.4       0.444      0.644    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 7 2 | a = yes
+ 3 2 | b = no
+
+
+*Ridor
+
+Description:
+
+An implementation of a RIpple-DOwn Rule learner.
+
+It generates a default rule first and then the exceptions for the default rule
+with the least (weighted) error rate. Then it generates the "best" exceptions
+for each exception and iterates until pure. Thus it performs a tree-like
+expansion of exceptions.The exceptions are a set of rules that predict classes
+other than the default. IREP is used to generate the exceptions.
+
+Rule set:
+
+play = no  (14.0/9.0)
+           Except (humidity <= 82.5) => play = yes  (5.0/1.0) [2.0/0.0]
+
+Performance:
+
+Correctly Classified Instances           8               57.1429 %
+Incorrectly Classified Instances         6               42.8571 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.778     0.8        0.636     0.778     0.7        0.489    yes
+                 0.2       0.222      0.333     0.2       0.25       0.489    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 7 2 | a = yes
+ 4 1 | b = no
+
+
+
+5. Nearest neighbor approaches
+
+* IB1
+
+Description:
+
+Nearest-neighbour classifier. Uses normalized Euclidean distance to find the
+training instance closest to the given test instance, and predicts the same
+class as this training instance. If multiple instances have the same (smallest)
+distance to the test instance, the first one found is used.
+
+
+Results:
+
+Correctly Classified Instances          13               92.8571 %
+Incorrectly Classified Instances         1                7.1429 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.889     0          1         0.889     0.941      0.944    yes
+                 1         0.111      0.833     1         0.909      0.944    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 8 1 | a = yes
+ 0 5 | b = no
+
+* kStar
+
+Description:
+
+K* is an instance-based classifier, that is the class of a test instance is based upon the class of those training instances similar to it, as determined by some similarity function. It differs from other instance-based learners in that it uses an entropy-based distance function.
+
+Results:
+
+Correctly Classified Instances           9               64.2857 %
+Incorrectly Classified Instances         5               35.7143 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.778     0.6        0.7       0.778     0.737      0.711    yes
+                 0.4       0.222      0.5       0.4       0.444      0.711    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 7 2 | a = yes
+ 3 2 | b = no
+
+
+
+* NNge
+
+Description:
+
+Nearest-neighbor-like algorithm using non-nested generalized exemplars (which are hyperrectangles that can be viewed as if-then rules).
+
+Rule set:
+
+class no IF : outlook in {rainy} ^ 65.0<=temperature<=71.0 ^ 70.0<=humidity<=91.0 ^ windy in {TRUE}  (2)
+class yes IF : outlook in {overcast} ^ temperature=72.0 ^ humidity=90.0 ^ windy in {TRUE}  (1)
+class yes IF : outlook in {overcast,rainy} ^ 68.0<=temperature<=83.0 ^ 75.0<=humidity<=96.0 ^ windy in {FALSE}  (5)
+class yes IF : outlook in {sunny,overcast} ^ 64.0<=temperature<=75.0 ^ 65.0<=humidity<=70.0 ^ windy in {TRUE,FALSE}  (3)
+class no IF : outlook in {sunny} ^ 72.0<=temperature<=85.0 ^ 85.0<=humidity<=95.0 ^ windy in {TRUE,FALSE}  (3)
+
+Performance:
+
+Correctly Classified Instances          10               71.4286 %
+Incorrectly Classified Instances         4               28.5714 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.889     0.6        0.727     0.889     0.8        0.644    yes
+                 0.4       0.111      0.667     0.4       0.5        0.644    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 8 1 | a = yes
+ 3 2 | b = no
+
+
+6. Discussion
+
+By far, the most successful classifier is the IB1, with 93% of the instances
+classified correctly (it only misclassifies one record). The rule based
+classifier perform rather poorly, with PART producing the best result
+(64%). Notice that  ConjunctiveRule also has an accuracy of 64%, but it
+classify all the records as 'yes'. The use of such classifier still remains a
+mystery to me.
+
+It also seems that the size of dataset (with only 14 instances), is too small
+to get some meaningful results.
+ 
