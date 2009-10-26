@@ -1,0 +1,346 @@
+CSCI 568 Project 2.2
+2009-10-26
+Alejandro Weinstein
+
+1. Bayesian classifiers
+
+* BayesNet
+
+Description:
+
+Base class for a Bayes Network classifier. Provides datastructures (network
+structure, conditional probability distributions, etc.) and facilities common
+to Bayes Network learning algorithms like K2 and B. Works with nominal
+variables and no missing values only.
+
+
+Classifier model:
+
+Bayes Network Classifier
+not using ADTree
+#attributes=5 #classindex=4
+Network structure (nodes followed by parents)
+outlook(3): play 
+temperature(1): play 
+humidity(1): play 
+windy(2): play 
+play(2): 
+
+The Bayesian belief network is in the file bayesnet.png.
+
+Performance:
+
+Correctly Classified Instances          10               71.4286 %
+Incorrectly Classified Instances         4               28.5714 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.889     0.6        0.727     0.889     0.8        0.8      yes
+                 0.4       0.111      0.667     0.4       0.5        0.8      no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 8 1 | a = yes
+ 3 2 | b = no
+
+
+* NaiveBayes
+
+Description:
+
+Class for a Naive Bayes classifier using estimator classes. Numeric estimator
+precision values are chosen based on analysis of the training data. For this
+reason, the classifier is not an UpdateableClassifier (which in typical usage
+are initialized with zero training instances) -- if you need the
+UpdateableClassifier functionality, use the NaiveBayesUpdateable
+classifier. The NaiveBayesUpdateable classifier will use a default precision of
+0.1 for numeric attributes when buildClassifier is called with zero training
+instances.
+
+Classifier model:
+
+Naive Bayes Classifier
+
+                 Class
+Attribute          yes      no
+                (0.63)  (0.38)
+===============================
+outlook
+  sunny             3.0     4.0
+  overcast          5.0     1.0
+  rainy             4.0     3.0
+  [total]          12.0     8.0
+
+temperature
+  mean          72.9697 74.8364
+  std. dev.      5.2304   7.384
+  weight sum          9       5
+  precision      1.9091  1.9091
+
+humidity
+  mean          78.8395 86.1111
+  std. dev.      9.8023  9.2424
+  weight sum          9       5
+  precision      3.4444  3.4444
+
+windy
+  TRUE              4.0     4.0
+  FALSE             7.0     3.0
+  [total]          11.0     7.0
+
+Performance:
+
+Correctly Classified Instances          11               78.5714 %
+Incorrectly Classified Instances         3               21.4286 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.778     0.2        0.875     0.778     0.824      0.8      yes
+                 0.8       0.222      0.667     0.8       0.727      0.8      no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 7 2 | a = yes
+ 1 4 | b = no
+
+* NaiveBayesSimple
+
+Description:
+
+Class for building and using a simple Naive Bayes classifier. Numeric
+attributes are modelled by a normal distribution.
+
+Classifier model:
+
+Naive Bayes (simple)
+
+Class yes: P(C) = 0.625     
+
+Attribute outlook
+sunny	overcast	rainy	
+0.25      	0.41666667	0.33333333	
+
+Attribute temperature
+Mean: 73	Standard Deviation: 6.164414  
+
+Attribute humidity
+Mean: 79.11111111	Standard Deviation: 10.21572861
+
+Attribute windy
+TRUE	FALSE	
+0.36363636	0.63636364	
+
+
+
+Class no: P(C) = 0.375     
+
+Attribute outlook
+sunny	overcast	rainy	
+0.5       	0.125     	0.375     	
+
+Attribute temperature
+Mean: 74.6	Standard Deviation: 7.8930349 
+
+Attribute humidity
+Mean: 86.2	Standard Deviation: 9.7313925 
+
+Attribute windy
+TRUE	FALSE	
+0.57142857	0.42857143	
+
+
+Performance:
+
+Correctly Classified Instances          10               71.4286 %
+Incorrectly Classified Instances         4               28.5714 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.889     0.6        0.727     0.889     0.8        0.778    yes
+                 0.4       0.111      0.667     0.4       0.5        0.778    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 8 1 | a = yes
+ 3 2 | b = no
+
+
+
+2. ANN-based classifiers
+
+Description:
+
+A Classifier that uses backpropagation to classify instances. This network can
+be built by hand, created by an algorithm or both. The network can also be
+monitored and modified during training time. The nodes in this network are all
+sigmoid (except for when the class is numeric in which case the the output
+nodes become unthresholded linear units). 
+
+
+* MultilayerPerceptron
+
+Classifier model:
+
+Sigmoid Node 0
+    Inputs    Weights
+    Threshold    -3.2488354416891236
+    Node 2    5.706344521860182
+    Node 3    2.443270263208691
+    Node 4    2.642557649901566
+    Node 5    2.510341405715611
+Sigmoid Node 1
+    Inputs    Weights
+    Threshold    3.247940047055842
+    Node 2    -5.704744057107486
+    Node 3    -2.3959635449403205
+    Node 4    -2.61941341516743
+    Node 5    -2.5789267455312403
+Sigmoid Node 2
+    Inputs    Weights
+    Threshold    -1.4298110453038182
+    Attrib outlook=sunny    1.2796074137730873
+    Attrib outlook=overcast    2.5993304643376645
+    Attrib outlook=rainy    -2.482189408449901
+    Attrib temperature    -0.9917844366897345
+    Attrib humidity    -4.13257597252398
+    Attrib windy    -0.8030823939514038
+Sigmoid Node 3
+    Inputs    Weights
+    Threshold    -0.77406723408045
+    Attrib outlook=sunny    -1.9100370742566124
+    Attrib outlook=overcast    2.3822068707682837
+    Attrib outlook=rainy    0.23499213125743795
+    Attrib temperature    -0.8639638424331724
+    Attrib humidity    -0.8117295111072005
+    Attrib windy    3.092359794678844
+Sigmoid Node 4
+    Inputs    Weights
+    Threshold    -0.7812523749731834
+    Attrib outlook=sunny    -2.0149350612947305
+    Attrib outlook=overcast    2.4850160661055667
+    Attrib outlook=rainy    0.24297467799788966
+    Attrib temperature    -0.9010443938018438
+    Attrib humidity    -0.8326891162034936
+    Attrib windy    3.2551200398085225
+Sigmoid Node 5
+    Inputs    Weights
+    Threshold    -0.757410268221943
+    Attrib outlook=sunny    -1.9605922799976896
+    Attrib outlook=overcast    2.4819301353736045
+    Attrib outlook=rainy    0.2838381715677161
+    Attrib temperature    -0.8613350411165103
+    Attrib humidity    -0.7756280503535902
+    Attrib windy    3.1699101529353477
+Class yes
+    Input
+    Node 0
+Class no
+    Input
+    Node 1
+
+
+Performance:
+
+Correctly Classified Instances          10               71.4286 %
+Incorrectly Classified Instances         4               28.5714 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.778     0.4        0.778     0.778     0.778      0.733    yes
+                 0.6       0.222      0.6       0.6       0.6        0.733    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 7 2 | a = yes
+ 2 3 | b = no
+
+
+
+* VotedPerceptron
+
+Description:
+
+Implements the voted perceptron algorithm by Freund and Schapire. Globally
+replaces all missing values, and transforms nominal attributes into binary
+ones.
+
+
+
+* Winnow
+
+Description:
+
+From the abstract of the paper "Learning Quickly When Irrelevant Attributes
+Abound: A New Linear-threshold Algorithm"
+
+Valiant (1984) and others have studied the problem of learning various
+classes of Boolean functions from examples. Here we discuss incremental learning of
+these functions. We consider a setting in which the learner responds to each example
+according to a current hypothesis. Then the learner updates the hypothesis, if necessary,
+based on the correct classification of the example. One natural measure of the quality of
+learning in this setting is the number of mistakes the learner makes. For suitable classes
+of functions, learning algorithms are available that make a bounded number of mistakes,
+with the bound independent of the number of examples seen by the learner. We present
+one such algorithm that learns disjunctive Boolean functions, along with variants for
+learning other classes of Boolean functions. The basic method can be expressed as a
+linear-threshold algorithm. A primary advantage of this algorithm is that the number
+of mistakes grows only logarithmically with the number of irrelevant attributes in the
+examples. At the same time, the algorithm is computationally efficient in both time and
+space.
+
+
+
+Classifier model:
+
+Attribute weights
+
+w0 6.057502131845064
+w1 0.2
+w2 2.7571698369800015
+w3 2.1208998746000005
+w4 2.120899874600001
+w5 0.7425860000000003
+w6 0.07425860000000002
+w7 0.016314614420000005
+
+Performance:
+
+Correctly Classified Instances           9               64.2857 %
+Incorrectly Classified Instances         5               35.7143 %
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.889     0.8        0.667     0.889     0.762      0.544    yes
+                 0.2       0.111      0.5       0.2       0.286      0.544    no
+
+=== Confusion Matrix ===
+
+ a b   <-- classified as
+ 8 1 | a = yes
+ 4 1 | b = no
+
+
+
+3. Discussion
+
+I used cross-validation with 3 folds for all the classifiers. More folds
+resulted in lower accuracy. This may be explained by the limited size of the dataset.
+
+The Bayesian belief network say that all the attributes are conditionally
+independent. This is probably due to the small size of the dataset.
+
+All the classifiers have a similar performance. The winnow classifier was the
+worst, with 64% of correctly classified instances, and the Naive Bayes
+Classifier was the best, with 78.5% of the instances classified correctly.
+
+I think that the main issue with the experiment is that the dataset is too
+simple, both in terms of number of records and in number of attributes. 
