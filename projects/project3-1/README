@@ -1,0 +1,155 @@
+CSCI 568 Project 2.2
+2009-11-2
+Alejandro Weinstein
+
+1. Apriori
+
+Description:
+
+Class implementing an Apriori-type algorithm. Iteratively reduces the minimum
+support until it finds the required number of rules with the given minimum
+confidence.
+
+Association rules:
+
+Best rules found:
+
+ 1. outlook=overcast 4 ==> play=yes 4    conf:(1)
+ 2. temperature=cool 4 ==> humidity=normal 4    conf:(1)
+ 3. humidity=normal windy=FALSE 4 ==> play=yes 4    conf:(1)
+ 4. outlook=sunny play=no 3 ==> humidity=high 3    conf:(1)
+ 5. outlook=sunny humidity=high 3 ==> play=no 3    conf:(1)
+ 6. outlook=rainy play=yes 3 ==> windy=FALSE 3    conf:(1)
+ 7. outlook=rainy windy=FALSE 3 ==> play=yes 3    conf:(1)
+ 8. temperature=cool play=yes 3 ==> humidity=normal 3    conf:(1)
+ 9. outlook=sunny temperature=hot 2 ==> humidity=high 2    conf:(1)
+10. temperature=hot play=no 2 ==> outlook=sunny 2    conf:(1)
+
+
+2. PredictiveApriori
+
+Description:
+
+Class implementing the predictive apriori algorithm to mine association
+rules. It searches with an increasing support threshold for the best n
+rules concerning a support-based corrected confidence value.
+
+Association rules:
+
+I reduced the number of rules to 10, to be able to compare with the Apriori
+
+Best rules found:
+
+ 1. outlook=overcast 4 ==> play=yes 4    acc:(0.95323)
+ 2. temperature=cool 4 ==> humidity=normal 4    acc:(0.95323)
+ 3. humidity=normal windy=FALSE 4 ==> play=yes 4    acc:(0.95323)
+ 4. humidity=normal 7 ==> play=yes 6    acc:(0.69497)
+ 5. play=no 5 ==> humidity=high 4    acc:(0.59096)
+ 6. windy=FALSE 8 ==> play=yes 6    acc:(0.56435)
+ 7. temperature=hot 4 ==> humidity=high 3    acc:(0.54473)
+ 8. temperature=hot 4 ==> windy=FALSE 3    acc:(0.54473)
+ 9. temperature=cool 4 ==> play=yes 3    acc:(0.54473)
+10. humidity=normal play=yes 6 ==> windy=FALSE 4    acc:(0.51949)
+
+
+3. Tertius
+
+Description:
+
+Class implementing a Tertius-type algorithm. Abstract from the paper
+Confirmation-Guided Discovery of first-order rules with Tertius.:
+
+
+This paper deals with learning first-order logic rules from data lacking an
+explicit classification predicate. Consequently, the learned rules are not
+restricted to predicate definitions as in supervised inductive logic
+programming. First-order logic offers the ability to deal with structured,
+multi-relational knowledge. Possible applications include first-order knowledge
+discovery, induction of integrity constraints in databases, multiple predicate
+learning, and learning mixed theories of predicate definitions and integrity
+constraints. One of the contributions of our work is a heuristic measure of
+confirmation, trading off novelty and satisfaction of the rule.  The approach
+has been implemented in the Tertius system. The system performs an optimal
+best-first search, finding the k most confirmed hypotheses, and includes a
+non-redundant refinement operator to avoid duplicates in the search. Tertius
+can be adapted to many different domains by tuning its parameters, and it can
+deal either with individual-based representations by upgrading propositional
+representations to first-order, or with general logical rules. We describe a
+number of experiments demonstrating the feasibility and flexibility of our
+approach.
+
+
+
+Association rules:
+
+ 1. /* 0.633754 0.071429 */ play = yes ==> humidity = normal or outlook = overcast
+ 2. /* 0.607625 0.000000 */ humidity = normal ==> temperature = cool or play = yes
+ 3. /* 0.607625 0.000000 */ temperature = cool ==> humidity = normal
+ 4. /* 0.594071 0.214286 */ humidity = normal ==> temperature = cool
+ 5. /* 0.590214 0.000000 */ humidity = high and outlook = sunny ==> play = no
+ 6. /* 0.555556 0.000000 */ play = no ==> windy = TRUE or outlook = sunny
+ 7. /* 0.486606 0.000000 */ play = no and outlook = sunny ==> humidity = high
+ 8. /* 0.486606 0.000000 */ humidity = normal ==> play = yes or outlook = rainy
+ 9. /* 0.469374 0.000000 */ outlook = overcast ==> play = yes
+10. /* 0.469374 0.000000 */ windy = FALSE and outlook = overcast ==> temperature = hot
+11. /* 0.469374 0.000000 */ outlook = overcast ==> temperature = hot or windy = TRUE
+12. /* 0.469374 0.000000 */ temperature = hot and play = yes ==> outlook = overcast
+13. /* 0.469374 0.000000 */ play = no ==> humidity = high or windy = TRUE
+14. /* 0.469374 0.000000 */ temperature = hot ==> play = no or outlook = overcast
+15. /* 0.469374 0.000000 */ temperature = hot ==> humidity = high or outlook = overcast
+16. /* 0.469374 0.000000 */ humidity = high and play = no ==> temperature = mild or outlook = sunny
+17. /* 0.469374 0.000000 */ temperature = mild and play = yes ==> windy = TRUE or outlook = rainy
+18. /* 0.469374 0.000000 */ outlook = sunny ==> temperature = cool or windy = TRUE or play = no
+19. /* 0.467119 0.357143 */ play = yes ==> outlook = overcast
+20. /* 0.458333 0.071429 */ play = yes ==> windy = FALSE or outlook = overcast
+21. /* 0.458333 0.071429 */ humidity = high and play = no ==> outlook = sunny
+22. /* 0.439100 0.071429 */ play = no ==> humidity = high
+23. /* 0.439100 0.071429 */ humidity = high ==> temperature = mild or play = no
+24. /* 0.439100 0.071429 */ humidity = high ==> temperature = mild or outlook = sunny
+
+Number of hypotheses considered: 1724
+Number of hypotheses explored: 689
+
+4. HotSpot
+
+Description:
+
+HotSpot learns a set of rules (displayed in a tree-like structure) that
+maximize/minimize a target variable/value of interest. With a nominal target,
+one might want to look for segments of the data where there is a high
+probability of a minority value occuring (given the constraint of a minimum
+support). For a numeric target, one might be interested in finding segments
+where this is higher on average than in the whole data set. For example, in a
+health insurance scenario, find which health insurance groups are at the
+highest risk (have the highest claim ratio), or, which groups have the highest
+average insurance payout.
+
+
+Association rules:
+
+play=yes (64.29% [9/14])
+  humidity <= 80 (85.71% [6/7])
+  |   temperature > 65 (100% [5/5])
+  windy = FALSE (75% [6/8])
+  |   temperature <= 83 (85.71% [6/7])
+  |   |   humidity <= 86 (100% [5/5])
+  |   humidity <= 86 (83.33% [5/6])
+
+
+5. Discussion
+
+In general, all the algorithms produced association rules that makes
+sense. For instance, a rule like "play=no ==> humidity=high" is totally
+reasonable. Notice however, that this rule can be misleading, since you may
+think that the causality is "because we are not playing, the humidity is high",
+which is obviously not the case; so we must be alert and remember that
+association rules doesn't necessary  establish a causality
+relationship.
+
+Since, unlike class classifiers, we don't have a figure of merit
+(like prediction accuracy), it is hard to say if one of the algorithms is better
+than the other.
+
+
+Also, this dataset doesn't seems to be very appropriate to study rule
+associations, since the data is not asymmetric in nature.
