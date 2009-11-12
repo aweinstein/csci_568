@@ -1,0 +1,11 @@
+CSCI 568 Project 4.0
+2009-11-13
+Alejandro Weinstein
+
+
+Files description:
+
+experiment1.exp Experimenter schema in Java serialization format   
+experiment1.xml Experimenter schema in xml format 
+experimenter1.csv Experimenter resutls
+iris.kf Knowledge flow schema.
