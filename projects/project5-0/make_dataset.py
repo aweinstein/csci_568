@@ -15,12 +15,18 @@ def make_photo_list(photos):
     return photo_id
 
 def get_info(id):
-    
-    info = flickr.photos_getInfo(photo_id=id)
-    favorites = flickr.photos_getFavorites(photo_id=id)
+
+    try:
+        info = flickr.photos_getInfo(photo_id=id)
+    except:
+        info = None
+    try:
+        favorites = flickr.photos_getFavorites(photo_id=id)
+    except:
+        favorites = None
     try:
         exif = flickr.photos_getExif(photo_id=id)
-    except flickrapi.exceptions.FlickrError:
+    except:  #flickrapi.exceptions.FlickrError:
         exif = None
         print 'No access to exif' 
         
@@ -33,12 +39,16 @@ def get_info(id):
             'make':'?',
             'model':'?'}
     
-    photo = info.find('photo')
-    data['views'] = photo.attrib['views']
-    data['location'] = photo.find('owner').attrib['location'].replace(',',' ')
-    data['comments'] = photo.find('comments').text
-    data['tags_n'] = len(photo.find('tags').findall('tag'))
-    data['favorites'] = favorites.find('photo').attrib['total']
+
+    if info is not None:
+        photo = info.find('photo')
+        data['views'] = photo.attrib['views']
+        data['location'] = photo.find('owner').attrib['location'].replace(',',' ')
+        data['comments'] = photo.find('comments').text
+        data['tags_n'] = len(photo.find('tags').findall('tag'))
+
+    if favorites is not None:
+        data['favorites'] = favorites.find('photo').attrib['total']
 
     if exif is not None:
         exif_data = exif.find('photo').findall('exif')
@@ -62,22 +72,29 @@ def make_record(data):
     return ','.join(record)
     
 flickr = flickrapi.FlickrAPI(api_key)
-photos = flickr.photos_search(tags='cat', max_upload_date=1226383200)
-photos = make_photo_list(photos)
 
+photos_id = []
+for tag in tags:
+    print 'Getting photo ids for tag', tag
+    photos = flickr.photos_search(tags=tag, max_upload_date=1226383200, sort='relevance')
+    photos_id += make_photo_list(photos)
 
-#get_info('3021490602')
+print len(photos_id), 'photos found.'
+photos_id = set(photos_id) # Eliminate the duplicates
+print len(photos_id), 'unique photos found.'
+
 records = []
-for photo in photos:
+for photo in photos_id:
     r = make_record(get_info(photo))
     if r is not None:
         records.append(r)
     print records[-1]
 
+print 'Creating dataset.csv'
 f = file('dataset.csv', 'w')
 f.write(','.join(['id','views','location','comments','tags_n','favorites','make','model'])
         + '\n')
 f.write('\n'.join(records))
 f.write('\n')
 f.close()
-##print 'Done'
+print 'Done'
