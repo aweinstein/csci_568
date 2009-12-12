@@ -1,0 +1,171 @@
+\documentclass[letter,12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx,psfrag}
+\usepackage{geometry}
+\usepackage{subfigure}
+\usepackage{url}
+\geometry{left=3cm, right=3cm, top=2cm,bottom=4 cm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true}
+% define the title
+\author{Armin Eftekhari, Alejandro Weinstein}
+\title{ Data Mining, Project 5 report\\
+Mining Flickr}
+\date{December 4, 2009}
+
+\setlength{\parindent}{0in}
+%\setlength{\mathindent}{0in}
+\addtolength{\parskip}{5pt}
+
+\def\etal{\mbox{\textit{et al. }}}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Flickr is one of the most popular image hosting website, with more than 4 billion pictures \cite{wiki_flickr}. For each picture, the community can add comments, tags, or call the picture his or her favorite. Also, the details of the camera used to take the picture are available. So, an interesting question arise: is there any correlation between the popularity of a photo and the camera used to take it? The purpose of this project is to try to answer this, and to find other interesting patterns.
+
+\section{Generating the data set}
+
+There is no dataset directly available with the data needed to analyze Flickr. However, there is a Flickr API that allows to build such dataset. We wrote a Python script, using the Python ``Flickr API kit'' \cite{ web_flickr_api} to do that.
+
+We decided to build a dataset with the following attributes:
+\begin{description}
+\item[Id:] the unique id used by Flickr to identify a photo.
+\item[Views:] the number of views of the photo.
+\item[Location:] the location of the photo.
+\item[Comments:] the number of comments of the photo.
+\item[Tags:] the number of tags of the photo.
+\item[Favorites:] the number of Flickr users that call the photo a favorite.
+\item[Make:] the maker of the camera used to take the photo.
+\item[Model:] the model of the camera used to take the photo.
+\end{description}
+
+Since it is not feasible to get information about all the pictures in Flickr, a key point at the moment of building the dataset is to determine how to sample the website. We decided to get the data of 100 picture for each of the most popular tags. Unfortunately, we didn't find an API function to get the most popular tags, so we copy the list of the most popular tags from the ``All time most popular tags'' page \cite{web_flickr_tags}. We also looked at photos at least one year old, to guarantee that the pictures has been exposed to the community for a time long enough.
+
+We built the dataset in four steps:
+
+\begin{enumerate}
+\item Get the 100 ids for each of the popular tags: For each of the popular tags, we get the ids of 100 photos. In this step we ask for pictures at least one year old. We got 14400 records.
+\item Eliminate the duplicate ids. Since a given photo can be associated to more than one tag, it is possible to have duplicated ids. We eliminated the duplicate ids, reducing the 14400 records to 7342.
+\item Get the data for each photo id.
+\item Write the data as a CSV file.
+\end{enumerate}
+
+It is interesting to note that the time Flickr take to respond to each API call is roughly one second, and consequently, building the dataset took several hours.
+
+The examination of the dataset revealed that the \emph{Make} attribute was inconsistent, since we got slightly different names for a given maker. For instance, ``Olympus'' cameras were labeled as ``Olympus Imaging Corp.'', ``Olympus optical Co. Ltd'' or ``Olympus corporation''. We wrote another Python script to solve this inconsistency, reducing the number of unique manufacturers from 62 to 36.
+
+\section{Summary statistics}
+
+After finishing the preprocessing of the dataset, the next step on the data mining process is to generate some summary statistics, to get a general idea of the structure of the data. Table \ref{tbl:stat_num} shows the statistics for the numerical attributes. For the categorical attributes ``make'' and ``model'', the mode is ``Canon'' and ``Nikon D200'', respectively. 
+
+\begin{table}[!h]
+%\caption{Statistics for the ``views'' attribute}
+\centering
+\caption{Summary statistics for the numerical attributes.}
+\label{tbl:stat_num}
+\subtable{
+\begin{tabular}{|l|l|}
+\hline\multicolumn{2}{|c|}{views} \\
+\hline
+Min & 164 \\
+Max & 1184897 \\
+Mean & 14778.5\\
+Std dev & 35718.6 \\
+\hline
+\end{tabular}}
+\subtable{
+\begin{tabular}{|l|l|}
+\hline\multicolumn{2}{|c|}{comments} \\
+\hline
+Min & 6 \\
+Max & 2891 \\
+Mean & 150.2\\
+Std dev & 161.8 \\
+\hline
+\end{tabular}}
+\subtable{
+\begin{tabular}{|l|l|}
+\hline\multicolumn{2}{|c|}{tags} \\
+\hline
+Min & 2 \\
+Max & 279 \\
+Mean & 30.2\\
+Std dev & 17.5 \\
+\hline
+\end{tabular}}
+\subtable{
+\begin{tabular}{|l|l|}
+\hline\multicolumn{2}{|c|}{favorites} \\
+\hline
+Min & 0 \\
+Max & 8539 \\
+Mean & 243.0\\
+Std dev & 348.2 \\
+\hline
+\end{tabular}}
+\end{table}
+
+Figure \ref{fig:histo_numerical} shows the histograms for the numerical attributes. As can be seen, all the numerical attributes share a \emph{long tail} behavior, where most of the photos are unpopular (in terms of a low number of views, comments, etc), and a relatively small amount of the photos are very popular. Figure \ref{fig:histo_make} shows an histogram for the ``Make'' attribute. First of all, it can be noted that a significant amount of the photos (44\%) don't have information about the maker of the camera used to take the picture. As we will discuss later in section \ref{sec:classifier}, this will play a detrimental role in our data mining analysis. Secondly, we can see that the two mayor players are \emph{Canon} and \emph{Nikon}, followed by a handful of other brands with a significant share of the photos. Most of the remaining manufactures are associated with only one photo.
+
+\begin{figure}[!h]
+\centering
+\subfigure[``Views'' histogram]{
+\includegraphics[scale=0.35]{histo_views.pdf} 
+}
+\subfigure[``Comments'' histogram]{
+\includegraphics[scale=0.35]{histo_comments.pdf} 
+}
+\subfigure[``Tags'' histogram]{
+\includegraphics[scale=0.35]{histo_tags.pdf} 
+}
+\subfigure[``Favorites'' histogram]{
+\includegraphics[scale=0.35]{histo_favorites.pdf} 
+}
+\caption{Histogram for ``views'', ``comments'', ``tags'' and ``favorites''.}
+\label{fig:histo_numerical}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.6]{histo_make.pdf} 
+\caption{Histogram for the ``maker'' attribute.}
+\label{fig:histo_make}
+\end{figure}
+
+Figure \ref{fig:scatter} shows a scatter plot, where the $x$ axis correspond to the number of comments and the $y$ axis correspond to the number of views. The color of each point is mapped to the logarithm of the number of favorites\footnote{A logarithmic map is used due to the huge range of the variable. Otherwise, most of the points end with the same color}. This plot illustrate, once again, the \emph{long tail} behavior of the data, where we can see a big cluster of photos close to the origin, and a set of very popular outliers.
+
+Notice that all the plots for the summary statistics were produced using Python and the Matplotlib library, since we think that the ones produced by Weka are very low quality.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.6]{scatter.pdf} 
+\caption{Scatter plot. The color represente the logarithmic of the ``favorite'' attribute.}
+\label{fig:scatter}
+\end{figure}
+
+\section{Clustering}
+
+\section{Classifiers}\label{sec:classifier}
+
+\section{Discussion}
+
+The Flickr API provides a wonderful opportunity to explore very interesting datasets. However, an important point to consider in order to get meaningful results is the sampling strategy. While the sampling strategy we used is reasonable, there are other ways to sample the data that should be explored.
+
+It was not surprising that our data showed a long tail behavior, since this is typical for data originated on social networks. This fact leads us to think that it would be interesting to investigate some techniques specially tailored to this kind of distribution.  
+
+This work triggers some new interesting question that could be answering by mining Flickr, like for instance:
+\begin{itemize}
+\item Using geolocation information of the photos, can we identify a correlation between location and type of camera used? Producing, for examples, a statement like. ``people in the USA use mostly Canon cameras, while people in Europe use mostly Nikon''.
+\item So far we ignored the users, but some patterns may arise by looking at this dimension. For instance we could try to answer questions like, ``are some users with a lot of popular photos?'', ``can we identify ``different classes'' of users?'', etc.
+\item Can we found some semantic of the photos by looking at the data?
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{report.bib}
+\end{document}
